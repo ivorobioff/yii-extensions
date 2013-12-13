@@ -38,7 +38,7 @@ class Basic extends CBehavior
 		return $pass_module && $pass_controller && $pass_action;
 	}
 
-	public function loadJs()
+	public function loadJs($common_bootstrap = null)
 	{
 		$module = strtolower(!is_null(Yii::app()->controller->module) ? Yii::app()->controller->module->id : '');
 		$controller = strtolower(Yii::app()->controller->id);
@@ -57,10 +57,14 @@ class Basic extends CBehavior
 
 		$composer = new Composer(Yii::app()->params['js_composer']);
 
+		if ($common_bootstrap)
+		{
+			$composer->addBootstrap($common_bootstrap);
+		}
+
 		try
 		{
 			$composer
-				->addBootstrap('common.js')
 				->addBootstrap($bootstrap_name.'.js')
 				->process()
 				->save($bin.'.js');
