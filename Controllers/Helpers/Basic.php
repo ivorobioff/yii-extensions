@@ -65,7 +65,7 @@ class Basic extends CBehavior
 			$composer->addBootstrap($common_bootstrap);
 		}
 
-		if (is_readable($config['bin_path'].'/'.$bootstrap_file))
+		if (is_readable($config['app_path'].'/bootstrap/'.$bootstrap_file))
 		{
 			$composer->addBootstrap($bootstrap_file);
 		}
