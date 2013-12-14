@@ -47,7 +47,7 @@ class Basic extends CBehavior
 		if ($action == 'index') $action = '';
 
 		$bootstrap_name = trim($module.'-'.$controller.'-'.$action, '-');
-
+		
 		$bin = md5($bootstrap_name);
 
 		if (Yii::app()->params['is_production'])
@@ -55,19 +55,24 @@ class Basic extends CBehavior
 			return '<script src="'.Yii::app()->request->baseUrl.'/js/app/bin/'.$bin.'.js"></script>';
 		}
 
-		$composer = new Composer(Yii::app()->params['js_composer']);
+		$bootstrap_file = $bootstrap_name.'.js';
+		$config = Yii::app()->params['js_composer'];
+
+		$composer = new Composer($config);
 
 		if ($common_bootstrap)
 		{
 			$composer->addBootstrap($common_bootstrap);
 		}
 
+		if (is_readable($config['bin_path'].'/'.$bootstrap_file))
+		{
+			$composer->addBootstrap($bootstrap_file);
+		}
+
 		try
 		{
-			$composer
-				->addBootstrap($bootstrap_name.'.js')
-				->process()
-				->save($bin.'.js');
+			$composer->process()->save($bin.'.js');
 		}
 		catch (NoStart $ex)
 		{
