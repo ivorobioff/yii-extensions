@@ -38,7 +38,7 @@ class Basic extends CBehavior
 		return $pass_module && $pass_controller && $pass_action;
 	}
 
-	public function loadJs($common_bootstrap = null)
+	public function loadJs($common_bootfile = null)
 	{
 		$module = strtolower(!is_null(Yii::app()->controller->module) ? Yii::app()->controller->module->id : '');
 		$controller = strtolower(Yii::app()->controller->id);
@@ -46,35 +46,31 @@ class Basic extends CBehavior
 
 		if ($action == 'index') $action = '';
 
-		$bootstrap_name = trim($module.'-'.$controller.'-'.$action, '-');
-		
-		$bin = md5($bootstrap_name);
+		$bootfile_name = trim($module.'-'.$controller.'-'.$action, '-');
+
+		$bin = md5($bootfile_name);
 
 		if (Yii::app()->params['is_production'])
 		{
 			return '<script src="'.Yii::app()->request->baseUrl.'/js/app/bin/'.$bin.'.js"></script>';
 		}
 
-		$bootstrap_file = $bootstrap_name.'.js';
 		$config = Yii::app()->params['js_composer'];
+		$bootfile = $config['boot_path'].'/'.$bootfile_name.'.js';
 
-		$composer = new Composer($config);
+		$composer = new Composer($config['app_path']);
 
-		if ($common_bootstrap)
+		if ($common_bootfile)
 		{
-			$composer->addBootstrap($common_bootstrap);
+			$composer->addBootfile($common_bootfile);
 		}
 
-		if (is_readable($config['app_path'].'/bootstrap/'.$bootstrap_file))
+		if (is_readable($bootfile))
 		{
-			$composer->addBootstrap($bootstrap_file);
+			$composer->addBootfile($bootfile);
 		}
 
-		try
-		{
-			$composer->process()->save($bin.'.js');
-		}
-		catch (NoStart $ex)
+		if (!$composer->process($config['bin_path'].'/'.$bin.'.js'))
 		{
 			return '';
 		}

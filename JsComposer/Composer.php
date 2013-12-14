@@ -1,54 +1,54 @@
 <?php
 namespace Extensions\JsComposer;
 
-use Extensions\JsComposer\Exceptions\ErrorLoadingBootstrap;
+use Extensions\JsComposer\Exceptions\ErrorLoadingBootfile;
 use Extensions\JsComposer\Exceptions\ErrorSavingFile;
 use Extensions\JsComposer\Exceptions\ErrorLoadingClass;
-use Extensions\JsComposer\Exceptions\NoStart;
 
 /**
  * @author Igor Vorobioff<i_am_vib@yahoo.com>
  */
 class Composer
 {
-	private $_bootstraps = array();
-	private $_config;
+	private $_bootfiles = array();
+	private $_app_path;
 
 	private $_classes = array();
 
 	/**
 	 * @param string $filename - имя файла бутстрапа
 	 */
-	public function __construct($config)
+	public function __construct($app_path)
 	{
-		$this->_config = $config;
+		$this->_app_path = $app_path;
 	}
 
-	public function addBootstrap($filename)
+	public function addBootfile($filename)
 	{
-		$this->_bootstraps[] = $filename;
+		$this->_bootfiles[] = $filename;
 		return $this;
 	}
 
-	public function process()
+	public function process($filename)
 	{
-		if (!$this->_bootstraps) throw new NoStart();
+		if (!$this->_bootfiles) return false;
 
 		$classes = array();
 
-		foreach ($this->_bootstraps as $bootstrap)
+		foreach ($this->_bootfiles as $bootfile)
 		{
-			$classes = array_merge($classes, $this->_getBootstrapClasses($bootstrap));
+			$classes = array_merge($classes, $this->_getBootClasses($bootfile));
 		}
 
-		if (!$classes) throw new NoStart();
+		if (!$classes) return false;
 
 		$this->_loadClasses($classes);
+		$this->_save($filename);
 
-		return $this;
+		return true;
 	}
 
-	public function save($filename)
+	private function _save($filename)
 	{
 		$this->_classes = array_reverse($this->_classes);
 
@@ -59,29 +59,25 @@ class Composer
 			$result .= $this->_getFileContentByClass($class)."\n";
 		}
 
-		$path = $this->_config['bin_path'].'/'.$filename;
-
-		if (file_put_contents($path, $result) === false)
+		if (file_put_contents($filename, $result) === false)
 		{
-			throw new ErrorSavingFile('Error saving the file "'.$path.'"');
+			throw new ErrorSavingFile('Error saving the file "'.$filename.'"');
 		}
 	}
 
 
-	private function _getBootstrapClasses($filename)
+	private function _getBootClasses($filename)
 	{
-		$path = $this->_config['app_path'].'/bootstrap/'.$filename;
-
-		if (!is_readable($path))
+		if (!is_readable($filename))
 		{
-			throw new ErrorLoadingBootstrap('The bootstrap file "'.$filename.'" MUST be readable');
+			throw new ErrorLoadingBootfile('The boot-file "'.$filename.'" MUST be readable');
 		}
 
-		$content = file_get_contents($path);
+		$content = file_get_contents($filename);
 
 		if ($content === false)
 		{
-			throw new ErrorLoadingBootstrap('Error loading the bootstrap file "'.$filename.'"');
+			throw new ErrorLoadingBootfile('Error loading the boot-file "'.$filename.'"');
 		}
 
 		return $this->_parseHeader($content);
@@ -138,7 +134,7 @@ class Composer
 
 	private function _getFileContentByClass($class)
 	{
-		$file = $this->_config['app_path'].'/'.str_replace('.', '/', $class).'.js';
+		$file = $this->_app_path.'/'.str_replace('.', '/', $class).'.js';
 
 		if (!is_readable($file))
 		{
