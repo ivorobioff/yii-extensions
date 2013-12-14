@@ -71,10 +71,10 @@ class Composer
 	{
 		$path = $this->_config['app_path'].'/bootstrap/'.$filename;
 
-		if (!is_readable($path)) return array() ;
+		if (!is_readable($path)) throw new LoadBootstrapError($filename);
 
 		$content = file_get_contents($path);
-		if ($content === false) return array();
+		if ($content === false) throw new LoadBootstrapError($filename);
 
 		return $this->_parseHeader($content);
 	}
@@ -136,7 +136,7 @@ class Composer
 
 		if ($content === false)
 		{
-			throw new WrongFile('Can\'t load class "'.$class.'"');
+			throw new LoadClassError($class);
 		}
 
 		return $content;
