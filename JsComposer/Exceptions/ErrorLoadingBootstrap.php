@@ -3,4 +3,4 @@ namespace Extensions\JsComposer\Exceptions;
 
 use Extensions\JsComposer\Exceptions\Base;
 
-class ErrorSave extends Base {};
+class ErrorLoadingBootstrap extends Base {};

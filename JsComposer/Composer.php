@@ -1,9 +1,10 @@
 <?php
 namespace Extensions\JsComposer;
 
-use Extensions\JsComposer\Exceptions\ErrorSave;
+use Extensions\JsComposer\Exceptions\ErrorLoadingBootstrap;
+use Extensions\JsComposer\Exceptions\ErrorSavingFile;
+use Extensions\JsComposer\Exceptions\ErrorLoadingClass;
 use Extensions\JsComposer\Exceptions\NoStart;
-use Extensions\JsComposer\Exceptions\WrongFile;
 
 /**
  * @author Igor Vorobioff<i_am_vib@yahoo.com>
@@ -62,7 +63,7 @@ class Composer
 
 		if (file_put_contents($path, $result) === false)
 		{
-			throw new ErrorSave('Can\'t save file "'.$path.'"');
+			throw new ErrorSavingFile('Error saving the file "'.$path.'"');
 		}
 	}
 
@@ -71,10 +72,17 @@ class Composer
 	{
 		$path = $this->_config['app_path'].'/bootstrap/'.$filename;
 
-		if (!is_readable($path)) throw new LoadBootstrapError($filename);
+		if (!is_readable($path))
+		{
+			throw new ErrorLoadingBootstrap('The bootstrap file "'.$filename.'" MUST be readable');
+		}
 
 		$content = file_get_contents($path);
-		if ($content === false) throw new LoadBootstrapError($filename);
+
+		if ($content === false)
+		{
+			throw new ErrorLoadingBootstrap('Error loading the bootstrap file "'.$filename.'"');
+		}
 
 		return $this->_parseHeader($content);
 	}
@@ -132,11 +140,16 @@ class Composer
 	{
 		$file = $this->_config['app_path'].'/'.str_replace('.', '/', $class).'.js';
 
+		if (!is_readable($file))
+		{
+			throw new ErrorLoadingClass('The class file "'.$file.'" MUST be readable');
+		}
+
 		$content = file_get_contents($file);
 
 		if ($content === false)
 		{
-			throw new LoadClassError($class);
+			throw new ErrorLoadingClass('Error loading the class "'.$class.'"');
 		}
 
 		return $content;
