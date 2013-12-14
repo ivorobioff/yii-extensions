@@ -58,7 +58,7 @@ class Basic extends CBehavior
 		$config = Yii::app()->params['js_composer'];
 		$bootfile = $config['boot_path'].'/'.$bootfile_name.'.js';
 
-		$composer = new Composer($config['app_path']);
+		$composer = new Composer($config['classes_dir']);
 
 		if ($common_bootfile)
 		{

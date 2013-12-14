@@ -11,16 +11,16 @@ use Extensions\JsComposer\Exceptions\ErrorLoadingClass;
 class Composer
 {
 	private $_bootfiles = array();
-	private $_app_path;
+	private $_classes_dir;
 
 	private $_classes = array();
 
 	/**
 	 * @param string $filename - имя файла бутстрапа
 	 */
-	public function __construct($app_path)
+	public function __construct($classes_dir)
 	{
-		$this->_app_path = $app_path;
+		$this->_classes_dir = $classes_dir;
 	}
 
 	public function addBootfile($filename)
@@ -134,7 +134,7 @@ class Composer
 
 	private function _getFileContentByClass($class)
 	{
-		$file = $this->_app_path.'/'.str_replace('.', '/', $class).'.js';
+		$file = $this->_classes_dir.'/'.str_replace('.', '/', $class).'.js';
 
 		if (!is_readable($file))
 		{
