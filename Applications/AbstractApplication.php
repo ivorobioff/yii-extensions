@@ -45,7 +45,14 @@ abstract class AbstractApplication
 		{
 			if (!empty($config1[$index]) && is_array($config1[$index]) && is_array($item))
 			{
-				$config1[$index] = $this->_mergeConfig($config1[$index], $item);
+				if (is_numeric($index))
+				{
+					$config1[] = $item;
+				}
+				else
+				{
+					$config1[$index] = $this->_mergeConfig($config1[$index], $item);
+				}
 			}
 			else
 			{
