@@ -47,11 +47,10 @@ abstract class AbstractController extends CController
 		$access_manager = new AccessManager($action->id);
 
 		$access_manager
-			->setRequired($this->_require_auth)
-			->setExceptionsList($this->_auth_exceptions)
+			->setRequirements($this->_require_auth, $this->_auth_exceptions)
 			->blockAccessIf(!$this->isAuth());
 
-		if ($access_manager->isRestricted())
+		if ($access_manager->isAccessBlocked())
 		{
 			return $this->redirect($this->createUrl($this->createUrl(Yii::app()->user->loginUrl)));
 		}

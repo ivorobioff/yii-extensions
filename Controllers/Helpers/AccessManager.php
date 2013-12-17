@@ -13,15 +13,10 @@ class AccessManager
 		$this->_action_id = $action_id;
 	}
 
-	public function setRequired($is_required)
+	public function setRequirements($is_required, $exceptions_list = array())
 	{
 		$this->_is_required = $is_required;
-		return $this;
-	}
-
-	public function setExceptionsList(array $list)
-	{
-		$this->_exceptions_list = $list;
+		$this->_exceptions_list = $exceptions_list;
 		return $this;
 	}
 
@@ -31,7 +26,7 @@ class AccessManager
 		return $this;
 	}
 
-	public function isRestricted()
+	public function isAccessBlocked()
 	{
 		foreach ($this->_exceptions_list as &$value)
 		{
