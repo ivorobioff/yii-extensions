@@ -3,57 +3,45 @@ namespace Extensions\Controllers\Helpers;
 
 class AccessManager
 {
-	private $_require_flag;
-	private $_exceptions_list = array();
-	private $_condition_flag;
+	private $_is_required;
+	private $_exceptions_list;
+	private $_false;
 	private $_action_id;
 
-	public function setRequireFlag($flag)
+	public function __construct($action_id, $is_required, array $exceptions_list = array())
 	{
-		$this->_require_flag = $flag;
-		return $this;
+		$this->_action_id = $action_id;
+		$this->_is_required = $is_required;
+		$this->_exceptions_list = $exceptions_list;
 	}
 
-	public function setExceptionsList(array $actions_list)
+	public function blockAccessIf($false)
 	{
-		$this->_exceptions_list = $actions_list;
-		return $this;
+		$this->_false = $false;
 	}
 
-	public function setConditionFlag($flag)
-	{
-		$this->_condition_flag = $flag;
-		return $this;
-	}
-
-	public function setActionId($id)
-	{
-		$this->_action_id = $id;
-		return $this;
-	}
-
-	public function canAccess()
+	public function isRestricted()
 	{
 		foreach ($this->_exceptions_list as &$value)
 		{
 			$value = strtolower($value);
 		}
 
-		if ($this->_require_flag)
+		if ($this->_is_required)
 		{
-			if (!in_array(strtolower($this->_action_id), $this->_exceptions_list) && !$this->_condition_flag)
+			if (!in_array(strtolower($this->_action_id), $this->_exceptions_list) && $this->_false)
 			{
-				return false;
+				return true;
 			}
 		}
 		else
 		{
-			if (in_array(strtolower($this->_action_id), $this->_exceptions_list) && !$this->_condition_flag)
+			if (in_array(strtolower($this->_action_id), $this->_exceptions_list) && $this->_false)
 			{
-				return false;
+				return true;
 			}
 		}
 
-		return true;
+		return false;
 	}
 }
