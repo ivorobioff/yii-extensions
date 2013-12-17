@@ -40,9 +40,24 @@ abstract class AbstractValidator
 			return ;
 		}
 
-		$value = trim($this->_data[$field]);
+		$value = $this->_data[$field];
 
-		if ($value == '') $this->_addError($field, $error);
+		if (is_string($value) && trim($value) == '')
+		{
+			$this->_addError($field, $error);
+		}
+	}
+
+	final protected function _checkEmptyness($field, $error)
+	{
+		$value = setif($this->_data, $field, '');
+
+		if (is_string($value)) $value = trim($value);
+
+		if (empty($value))
+		{
+			$this->_addError($field, $error);
+		}
 	}
 
 	final protected function _checkEmail($field, $error)

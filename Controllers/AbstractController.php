@@ -24,7 +24,7 @@ abstract class AbstractController extends CController
 	 * Отправить ответ об успехе
 	 * @param array $data
 	 */
-	protected function ajaxSuccess(array $data = array())
+	protected function ajaxSuccess($data = array())
 	{
 		echo json_encode(array('status' => 'success', 'data' => $data));
 	}
@@ -33,7 +33,7 @@ abstract class AbstractController extends CController
 	 * Отправить ответ об ошибке
 	 * @param array $data
 	 */
-	protected function ajaxError(array $data = array())
+	protected function ajaxError($data = array())
 	{
 		echo json_encode(array('status' => 'error', 'data' => $data));
 	}
