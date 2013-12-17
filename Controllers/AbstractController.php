@@ -1,5 +1,7 @@
 <?php
 namespace Extensions\Controllers;
+
+use Extensions\Controllers\Helpers\AccessManager;
 use Extensions\Controllers\Helpers\Basic as BasicHelpers;
 use CController;
 use Yii;
@@ -38,50 +40,24 @@ abstract class AbstractController extends CController
 		echo json_encode(array('status' => 'error', 'data' => $data));
 	}
 
-	protected function isAjax()
-	{
-		return Yii::app()->request->isAjaxRequest;
-	}
-
 	public function beforeAction($action)
 	{
-		parent::beforeAction($action);
+		$result = parent::beforeAction($action);
 
-		if (!$this->_checkAuth())
+		$auth_manager = new AccessManager();
+
+		$pass_auth = $auth_manager
+			->setActionId($action->id)
+			->setRequireFlag($this->_require_auth)
+			->setExceptionsList($this->_auth_exceptions)
+			->setConditionFlag($this->isAuth())
+			->canAccess();
+
+		if (!$pass_auth)
 		{
 			return $this->redirect($this->createUrl($this->createUrl(Yii::app()->user->loginUrl)));
 		}
 
-		return true;
-	}
-
-	private function _checkAuth()
-	{
-		foreach ($this->_auth_exceptions as &$value)
-		{
-			$value = strtolower($value);
-		}
-
-		if ($this->_require_auth)
-		{
-			if (!in_array(strtolower($this->action->id), $this->_auth_exceptions) && !$this->isAuth())
-			{
-				return false;
-			}
-		}
-		else
-		{
-			if (in_array(strtolower($this->action->id), $this->_auth_exceptions) && !$this->isAuth())
-			{
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	protected function isAuth()
-	{
-		return !Yii::app()->user->isGuest;
+		return $result;
 	}
 }

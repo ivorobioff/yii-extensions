@@ -100,4 +100,14 @@ class Basic extends CBehavior
 		    12 => 'December',
 		);
 	}
+
+	public function isAuth()
+	{
+		return !Yii::app()->user->isGuest;
+	}
+
+	public function isAjax()
+	{
+		return Yii::app()->request->isAjaxRequest;
+	}
 }
