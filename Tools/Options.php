@@ -1,5 +1,5 @@
 <?php
-namespace Extensions\ProjectOptions;
+namespace Extensions\Tools;
 
 class Options
 {

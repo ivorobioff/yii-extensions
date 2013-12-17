@@ -1,5 +1,5 @@
 <?php
-namespace Extensions\InstantLog;
+namespace Extensions\Tools;
 
 use Yii;
 

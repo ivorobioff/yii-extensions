@@ -44,13 +44,12 @@ abstract class AbstractController extends CController
 	{
 		$result = parent::beforeAction($action);
 
-		$access_manager = new AccessManager(
-			$action->id,
-			$this->_require_auth,
-			$this->_auth_exceptions
-		);
+		$access_manager = new AccessManager($action->id);
 
-		$access_manager->blockAccessIf(!$this->isAuth());
+		$access_manager
+			->setRequired($this->_require_auth)
+			->setExceptionsList($this->_auth_exceptions)
+			->blockAccessIf(!$this->isAuth());
 
 		if ($access_manager->isRestricted())
 		{

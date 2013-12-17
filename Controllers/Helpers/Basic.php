@@ -5,6 +5,7 @@ use Extensions\JsComposer\Composer;
 use Extensions\JsComposer\Exceptions\NoStart;
 use CBehavior;
 use Yii;
+use Extensions\Tools\Config;
 
 class Basic extends CBehavior
 {
@@ -50,19 +51,18 @@ class Basic extends CBehavior
 
 		$bin = md5($bootfile_name);
 
-		if (Yii::app()->params['is_production'])
+		if (Config::get('is_production'))
 		{
 			return '<script src="'.Yii::app()->request->baseUrl.'/js/app/bin/'.$bin.'.js"></script>';
 		}
 
-		$config = Yii::app()->params['js_composer'];
-		$bootfile = $config['boot'].'/'.$bootfile_name.'.js';
+		$bootfile = Config::get('/js_composer/boot').'/'.$bootfile_name.'.js';
 
-		$composer = new Composer($config['classes']);
+		$composer = new Composer(Config::get('/js_composer/classes'));
 
 		if ($common_bootfile)
 		{
-			$composer->addBootfile($config['boot'].'/'.$common_bootfile);
+			$composer->addBootfile(Config::get('/js_composer/boot').'/'.$common_bootfile);
 		}
 
 		if (is_readable($bootfile))
@@ -70,7 +70,7 @@ class Basic extends CBehavior
 			$composer->addBootfile($bootfile);
 		}
 
-		if (!$composer->process($config['bin'].'/'.$bin.'.js'))
+		if (!$composer->process(Config::get('/js_composer/bin').'/'.$bin.'.js'))
 		{
 			return '';
 		}
