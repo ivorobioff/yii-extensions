@@ -16,14 +16,4 @@ abstract class AbstractModel
 	{
 		return new ResultFormater($data);
 	}
-
-	public function getObjectsList($class)
-	{
-		return new ObjectWrapper($class, $this, true);
-	}
-
-	public function getObject($class)
-	{
-		return new ObjectWrapper($class, $this);
-	}
 }
