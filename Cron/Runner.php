@@ -18,6 +18,6 @@ class Runner
 		$controller->beforeAction($action);
 
 		unset($parts[0], $parts[1], $parts[2]);
-		$controller->{'action'.$action->getId()}(array_values($parts));
+		call_user_func_array(array($controller, 'action'.$action->getId()), $parts);
 	}
 }

@@ -7,9 +7,9 @@ abstract class AbstractModel
 	/**
 	 * @return \CDbCommand
 	 */
-	protected function _createQuery()
+	protected function _createQuery($sql = null)
 	{
-		return \Yii::app()->db->createCommand();
+		return \Yii::app()->db->createCommand($sql);
 	}
 
 	protected function _formatResult($data)
