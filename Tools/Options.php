@@ -47,7 +47,10 @@ class Options
 		{
 			$opt = $this->_model->getByAlias($key);
 			if (is_null($opt)) throw new Exception('The option <'.$key.'> is not found');
-			$this->_cache[$key] = $opt;
+
+			$arr = json_decode($opt, true);
+
+			$this->_cache[$key] = is_null($arr) ? $opt : $arr;
 		}
 
 		return $this->_cache[$key];
