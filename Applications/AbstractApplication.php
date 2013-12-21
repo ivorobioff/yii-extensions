@@ -9,9 +9,6 @@ abstract class AbstractApplication
 	{
 		$this->_root_dir = $root_dir;
 
-		defined('YII_DEBUG') or define('YII_DEBUG', true);
-		defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL',3);
-
 		require_once $this->_root_dir.'/../share/extensions/functions.php';
 		require_once $this->_root_dir.'/../share/yii-framework/yii.php';
 	}
@@ -27,6 +24,13 @@ abstract class AbstractApplication
 		$app_config = include $this->_root_dir.'/protected/config/'.$alias.'.php';
 
 		$config = \CMap::mergeArray($config, $app_config);
+
+		$local_base_config = $this->_root_dir.'/protected/config/local/base.php';
+		if (file_exists($local_base_config))
+		{
+			$local_base_config = include $local_base_config;
+			$config = \CMap::mergeArray($config, $local_base_config);
+		}
 
 		$local_config = $this->_root_dir.'/protected/config/local/'.$alias.'.php';
 
