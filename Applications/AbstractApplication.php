@@ -9,6 +9,9 @@ abstract class AbstractApplication
 	{
 		$this->_root_dir = $root_dir;
 
+		defined('YII_DEBUG') or define('YII_DEBUG', true);
+		defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL',3);
+
 		require_once $this->_root_dir.'/../share/extensions/functions.php';
 		require_once $this->_root_dir.'/../share/yii-framework/yii.php';
 	}
