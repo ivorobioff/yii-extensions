@@ -14,6 +14,9 @@ abstract class AbstractController extends CController
 	protected $_require_auth = true;
 	protected $_auth_exceptions = array();
 
+	protected $_require_not_auth = false;
+	protected $_not_auth_exceptions = array();
+
 	public $layout='//layouts/main';
 
 	public function init()
@@ -43,8 +46,14 @@ abstract class AbstractController extends CController
 	public function beforeAction($action)
 	{
 		$result = parent::beforeAction($action);
+		$this->_checkAuthAccess($action->getId());
+		$this->_checkNotAuthAccess($action->getId());
+		return $result;
+	}
 
-		$access_manager = new AccessManager($action->id);
+	protected function _checkAuthAccess($action_id)
+	{
+		$access_manager = new AccessManager($action_id);
 
 		$access_manager
 			->setRequirements($this->_require_auth, $this->_auth_exceptions)
@@ -54,7 +63,19 @@ abstract class AbstractController extends CController
 		{
 			return $this->redirect($this->createUrl($this->createUrl(Yii::app()->user->loginUrl)));
 		}
+	}
 
-		return $result;
+	protected function _checkNotAuthAccess($action_id)
+	{
+		$access_manager = new AccessManager($action_id);
+
+		$access_manager
+			->setRequirements($this->_require_not_auth, $this->_not_auth_exceptions)
+			->blockAccessIf($this->isAuth());
+
+		if ($access_manager->isAccessBlocked())
+		{
+			$this->redirect($this->createUrl('/Analyzes/dashboard'));
+		}
 	}
 }
