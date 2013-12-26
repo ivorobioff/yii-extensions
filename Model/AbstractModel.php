@@ -2,6 +2,10 @@
 namespace Extensions\Model;
 
 use Extensions\Model\ResultFormater;
+/**
+ * @deprecated
+ * @author Igor Vorobioff<igor.vorobioff@gmail.com>
+ */
 abstract class AbstractModel
 {
 	/**

@@ -1,11 +1,6 @@
 <?php
-namespace Extensions\Model;
+namespace Extensions\Tools;
 
-/**
- * @deprecated
- * @author Igor Vorobioff<igor.vorobioff@gmail.com>
- *
- */
 class ResultFormater
 {
 	private $_data;
