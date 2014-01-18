@@ -78,9 +78,9 @@ class Basic extends CBehavior
 		return '<script src="'.Yii::app()->request->baseUrl.'/js/app/bin/'.$bin.'.js"></script>';
 	}
 
-	public function setif(array $array, $key = null)
+	public function setif(array $array, $key, $default = null)
 	{
-		return setif($array, $key);
+		return setif($array, $key, $default);
 	}
 
 	public function buildMonthsList()
